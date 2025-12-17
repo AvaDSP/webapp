@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { windowType, filterType } from './enums';
+import { WindowType, FilterType } from '../../core/enums';
 import Button from '../../ui/Button';
 
 export const Panel = ({ trigger, updateTrigger,
@@ -18,7 +18,7 @@ export const Panel = ({ trigger, updateTrigger,
 
     return (
         <div className="flex flex-col justify-between h-screen h-48 bg-gray-50 p-2 my-5 mx-2 rounded-2xl shadow-md" style={{ height: '322px', width: '515px' }}>
-            <div className="m-4">
+            <div className="m-4 mb-9">
                 <div id="content">
                     <div className="flex items-center">
                         <label>Filter Type: </label>
@@ -29,31 +29,31 @@ export const Panel = ({ trigger, updateTrigger,
 
                             {fitlerTypeDropdownIsOpen && (
                                 <div className="absolute flex flex-col bg-white p-3 shadow  rounded-lg z-10">
-                                    <a id="chooseFilterType" onClick={() => { updateChoosenFilterType(filterType.LOWPASS); toggleFilterTypeDropdown(); } } className="my-0.5 w-24 cursor-pointer">Low-pass</a>
-                                    <a id="chooseFilterType" onClick={() => { updateChoosenFilterType(filterType.HIGHPASS); toggleFilterTypeDropdown(); } } className="my-0.5 w-24 cursor-pointer">High-pass</a>
-                                    <a id="chooseFilterType" onClick={() => { updateChoosenFilterType(filterType.BANDPASS); toggleFilterTypeDropdown(); } } className="my-0.5 w-24 cursor-pointer">Band-pass</a>
-                                    <a id="chooseFilterType" onClick={() => { updateChoosenFilterType(filterType.BANDSTOP); toggleFilterTypeDropdown() } } className="my-0.5 w-24 cursor-pointer">Band-stop</a>
+                                    <a id="chooseFilterType" onClick={() => { updateChoosenFilterType(FilterType.LOWPASS); toggleFilterTypeDropdown(); } } className="my-0.5 w-24 cursor-pointer">Low-pass</a>
+                                    <a id="chooseFilterType" onClick={() => { updateChoosenFilterType(FilterType.HIGHPASS); toggleFilterTypeDropdown(); } } className="my-0.5 w-24 cursor-pointer">High-pass</a>
+                                    <a id="chooseFilterType" onClick={() => { updateChoosenFilterType(FilterType.BANDPASS); toggleFilterTypeDropdown(); } } className="my-0.5 w-24 cursor-pointer">Band-pass</a>
+                                    <a id="chooseFilterType" onClick={() => { updateChoosenFilterType(FilterType.BANDSTOP); toggleFilterTypeDropdown() } } className="my-0.5 w-24 cursor-pointer">Band-stop</a>
                                 </div>
                             )}
                         </div>
                     </div>
                 </div>
 
-                {chosenFilterType == "Low-pass" &&
-                    <div className="mt-3">
-                        <label>Cuttoff Freq:</label>
-                        <input className="rounded-lg shadow p-1 my-3 w-32 mx-1" onChange={(e) => updateHighCutoff(Number(e.target.value))} value={highCutoff} placeholder="Rad/Samples" type="number" step="0.01" max="3.14" min="0"></input>
-                    </div>
-                }
-
-                {chosenFilterType == "High-pass" &&
+                {chosenFilterType == "lowpass" &&
                     <div className="mt-3">
                         <label>Cuttoff Freq:</label>
                         <input className="rounded-lg shadow p-1 my-3 w-32 mx-1" onChange={(e) => updateLowCutoff(Number(e.target.value))} value={lowCutoff} placeholder="Rad/Samples" type="number" step="0.01" max="3.14" min="0"></input>
                     </div>
                 }
 
-                {chosenFilterType == "Band-pass" &&
+                {chosenFilterType == "highpass" &&
+                    <div className="mt-3">
+                        <label>Cuttoff Freq:</label>
+                        <input className="rounded-lg shadow p-1 my-3 w-32 mx-1" onChange={(e) => updateLowCutoff(Number(e.target.value))} value={lowCutoff} placeholder="Rad/Samples" type="number" step="0.01" max="3.14" min="0"></input>
+                    </div>
+                }
+
+                {chosenFilterType == "bandpass" &&
                     <div className="mt-3">
                         <label>Low freq:</label>
                         <input className="rounded-lg shadow p-1 my-3 w-32 mx-1 mr-5" onChange={(e) => updateLowCutoff(Number(e.target.value))} value={lowCutoff} placeholder="Rad/Samples" type="number" step="0.01" max="3.14" min="0"></input>
@@ -62,7 +62,7 @@ export const Panel = ({ trigger, updateTrigger,
                     </div>
                 }
 
-                {chosenFilterType == "Band-stop" &&
+                {chosenFilterType == "bandstop" &&
                     <div className="mt-3">
                         <label>Low freq:</label>
                         <input className="rounded-lg shadow p-1 my-3 w-32 mx-1 mr-5" onChange={(e) => updateLowCutoff(Number(e.target.value))} value={lowCutoff} placeholder="Rad/Samples" type="number" step="0.01" max="3.14" min="0"></input>
@@ -79,10 +79,10 @@ export const Panel = ({ trigger, updateTrigger,
                         </button>
                         {windowTypeDropdownIsOpen && (
                             <div className="absolute flex flex-col bg-white p-3 shadow  rounded-lg">
-                                <a className="z-0 my-0.5 w-24 cursor-pointer" id="chooseFilterType" onClick={() => {updateChosenWindowType(windowType.RECTANGULAR); toggleWindowTypeDropdown() }}>Rectangular</a>
-                                <a id="chooseFilterType" onClick={() => {updateChosenWindowType(windowType.HAMMING); toggleWindowTypeDropdown()} } className="my-0.5 w-24 cursor-pointer">Hamming</a>
-                                <a id="chooseFilterType" onClick={() => {updateChosenWindowType(windowType.HAN); toggleWindowTypeDropdown()} } className="my-0.5 w-24 cursor-pointer">Han</a>
-                                <a id="chooseFilterType" onClick={() => {updateChosenWindowType(windowType.BARTLETT); toggleWindowTypeDropdown()} } className="my-0.5 w-24 cursor-pointer">Bartlett</a>
+                                <a className="z-0 my-0.5 w-24 cursor-pointer" id="chooseFilterType" onClick={() => {updateChosenWindowType(WindowType.RECTANGULAR); toggleWindowTypeDropdown() }}>Rectangular</a>
+                                <a id="chooseFilterType" onClick={() => {updateChosenWindowType(WindowType.HAMMING); toggleWindowTypeDropdown()} } className="my-0.5 w-24 cursor-pointer">Hamming</a>
+                                <a id="chooseFilterType" onClick={() => {updateChosenWindowType(WindowType.HAN); toggleWindowTypeDropdown()} } className="my-0.5 w-24 cursor-pointer">Han</a>
+                                <a id="chooseFilterType" onClick={() => {updateChosenWindowType(WindowType.BARTLETT); toggleWindowTypeDropdown()} } className="my-0.5 w-24 cursor-pointer">Bartlett</a>
                             </div>
                         )}
                     </div>

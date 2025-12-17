@@ -1,10 +1,56 @@
-import { bilinearTransform, getCausalButterworthPoles, H_of_s, countNumberOfOccurrences, filter, lowPassImpulseResponse, bandpassImpulseResponse, elementWiseMultiply, elementWiseAdd,  Hamming, Bartlett, Han} from "../Common/Utils";
-import { filterType } from '../Common/enums';
+import { bilinearTransform, getCausalButterworthPoles, H_of_s, countNumberOfOccurrences, filter, lowPassImpulseResponse, bandpassImpulseResponse, elementWiseMultiply, elementWiseAdd, Hamming, Bartlett, Han, WindowingMethodDesign, AnalogToDigitalTransformationDesign } from "../../core";
+import { AnalogToDigitalTransformationDesignMethod, FilterType, WindowType } from "../../core/enums";
 
 let vars = {};
 const INVALID_COMMAND_MESSAGE = "Invalid usage! Type 'help' for assistance.";
 
 export const parse = (cmd, log, updateLog, updateCmd) => {
+    // Example usage
+    // const params = [
+    //     { type: "enum", valid_values: ["lowpass", "highpass"] },
+    //     { type: "int" },
+    //     { type: "int" },
+    //     { type: "float", optional: true },
+    // ];
+    // Returns:
+    // "^\s*butterworth\s*\(\s*(lowpass|highpass)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:\s*,\s*([0-9]*\.?[0-9]+)\s*)?\s*\)\s*$"
+    const rgxBuilder = (
+        name: string,
+        params: { type: string; valid_values?: string[], optional? }[]
+    ): RegExp => {
+
+        let paramsStr = "";
+
+        for (let i = 0; i < params.length; i++) {
+            const p = params[i];
+            let tmp = ""
+            switch (p.type) {
+                case 'enum':
+                    tmp = `\\s*(${p.valid_values?.join('|')})\\s*`;
+                    break;
+                case 'string':
+                    tmp = `\\s*([\\w\\s]+)\\s*`;
+                    break;
+                case 'int':
+                    tmp = `\\s*(\\d+)\\s*`;
+                    break;
+                case 'float':
+                    tmp = `\\s*([0-9]*\\.?[0-9]+)\\s*`;
+                    break;
+                default:
+                    throw new Error(`Unknown type: ${p.type}`);
+            }  
+            if (p.optional && p.optional == true) {
+                tmp = `(?:\\s*,${tmp})?\\s*`;
+            } else if (i != params.length - 1) {
+                tmp += `,`;
+            }
+            paramsStr += tmp;
+        }
+
+        // Whitespace* + name + ( + paramters + )
+        return RegExp(`^\\s*${name}\\s*\\(${paramsStr}\\)\\s*$`);
+    };
 
     const rgx =
     {
@@ -12,11 +58,25 @@ export const parse = (cmd, log, updateLog, updateCmd) => {
         listVariables: /^\s*list\s*$/,
         clearVariables: /^\s*reset\s*$/,
         filter: /^\s*filter\s*\((.*)\)\s*$/,
-        windowing: /^^\s*windowing\s*\(\s*(lowpass|highpass|bandpass|bandstop)\s*,\s*(rectangular|hamming|han|bartlett)\s*,\s*(\d+)\s*,\s*([0-9]*\.?[0-9]+)(?:\s*,\s*([0-9]*\.?[0-9]+))?\s*\)\s*$/,
-        butterworth: /^^\s*butterworth\s*\(\s*(lowpass|highpass)\s*,\s*(\d+)\s*,\s*([0-9]*\.?[0-9]+)\)\s*$/
+        windowing: rgxBuilder("windowing", [
+            {type: "enum", valid_values: ["lowpass", "highpass", "bandpass", "bandstop"]},
+            {type: "enum", valid_values: ["rectangular", "hamming", "han", "bartlett"]},
+            {type: "int" },
+            {type: "float" },
+            {type: "float", optional: true },
+        ]),
+        // windowing: /^^\s*windowing\s*\(\s*(lowpass|highpass|bandpass|bandstop)\s*,\s*(rectangular|hamming|han|bartlett)\s*,\s*(\d+)\s*,\s*([0-9]*\.?[0-9]+)(?:\s*,\s*([0-9]*\.?[0-9]+))?\s*\)\s*$/,
+        analogToDigital: rgxBuilder("analogToDigital", [
+            {type: "enum", valid_values: ["butterworth", "chebyshev"]},
+            {type: "enum", valid_values: ["lowpass", "highpass"]},
+            {type: "int" },
+            {type: "float" },
+        ]),
     }
 
-    const patterns = [
+    const patterns: {
+        regex: RegExp;
+        action: () => void;}[] = [
         { regex: /^\s*clear\s*$/, action: () => updateLog(["Cleared..."]) },
         { regex: /^\s*help\s*$/, action: () => help(log, updateLog) },
         { regex: /^\s*version\s*$/, action: () => version(log, updateLog) },
@@ -25,10 +85,10 @@ export const parse = (cmd, log, updateLog, updateCmd) => {
         { regex: rgx.clearVariables, action: () => clearVariables(log, updateLog) },
         { regex: rgx.filter, action: () => execFilter(rgx.filter, cmd, log, updateLog) },
         { regex: rgx.windowing, action: () => execWindowing(rgx.windowing, cmd, log, updateLog) },
-        { regex: rgx.butterworth, action: () => execButterworth(rgx.butterworth, cmd, log, updateLog) },
+        { regex: rgx.analogToDigital, action: () => execAnalogToDigital(rgx.analogToDigital, cmd, log, updateLog) },
     ];
-
     for (let i = 0; i < patterns.length; i++) {
+        console.log(patterns[i].regex)
         if (patterns[i].regex.test(cmd)) {
             patterns[i].action();
             break;
@@ -60,8 +120,9 @@ const help = (log, updateLog) => {
         "\t\tw_c: A float - Normalized frequency in radians per samples denoting start of cutoff frequency\n",
         "\t\tw_s (optional): A float - Normalized frequency in radians per samples denoting stop cutoff frequency for BP and BS filter\n",
         "\t\n",
-        "\tbutterworth(filter_type, N, w_c) - Designs a filter via Butterworth method.\t",
-        "\t\tfilter_type: 'lowpass' or 'highpass'' - Type of the filter\n",
+        "\tanalogToDigital(method, filter_type, N, w_c) - Designs a filter via Analog-to-digital transformation method.\t",
+        "\t\tmethod: 'butterworth' or 'chebyshev'' - Type of design method\n",
+        "\t\tfilter_type: 'lowpass' or 'highpass'' - Type of filter\n",
         "\t\tN: An integer - Filter order \n",
         "\t\tw_c: A float - Normalized frequency in radians per samples denoting cutoff frequency\n",
     ];
@@ -149,74 +210,20 @@ const execFilter = (rgx, cmd, log, updateLog) => {
     updateLog(log.concat(text));
 }
 
-const getImpulseResponse = (w1, w2, filter_type, N = 1024) => {
-    switch (filter_type) {
-        case "lowpass":
-            return lowPassImpulseResponse(w1, N);
-        case "highpass":
-            return bandpassImpulseResponse(Math.PI, w1, N);
-        case "bandpass":
-            return bandpassImpulseResponse(w1, w2, N);
-        case "bandstop":
-            return elementWiseAdd(bandpassImpulseResponse(Math.PI, w1, N), lowPassImpulseResponse(w1, N));
-    }
-}
+
 
 const execWindowing = (rgx, cmd, log, updateLog) => {
-
     const match = rgx.exec(cmd);
-    let filter_type = match[1];
-    let w_1 = match[4];
-    let w_2 = match[5];
-    if(w_2 && (filter_type == 'lowpass' || filter_type == 'highpass')){
-        const text = ["\n", "Error: Second cutoff frequency should not be specified for lowpass and highpass filters!"]
-        updateLog(log.concat(text));
-        return;
-    }
-    let N = match[3];
-    let x = [];
-
-    switch (match[2]) {
-        case "rectangular":
-            x = getImpulseResponse(w_1, w_1, filter_type, N);
-            break;
-        case "bartlett":
-            x = elementWiseMultiply(getImpulseResponse(w_1, w_2, N), Bartlett(N))
-            break;
-        case "hamming":
-            x = elementWiseMultiply(getImpulseResponse(w_1, w_2, N), Hamming(N))
-            break;
-        case "han":
-            x = elementWiseMultiply(getImpulseResponse(w_1, w_2, N), Han(N))
-            break;
-    }
-    const text = ["\n", "> " + cmd, x.join(' ')]
+    const coef = WindowingMethodDesign(match[1] as FilterType, match[2] as WindowType, match[3], match[4], match[5]);
+    const text = ["\n", "> " + cmd, coef.num.join(' ')]
     updateLog(log.concat(text));
 }
 
-const execButterworth = (rgx, cmd, log, updateLog) => {
+const execAnalogToDigital = (rgx, cmd, log, updateLog) => {
     const match = rgx.exec(cmd);
-    let filter_type = match[1];
-    let N = match[2];
-    let w_c = match[3];
-    let x = [];
-    const Omega_c = 2 * Math.tan(w_c / 2);
-    // 2: 
-    let poles = getCausalButterworthPoles(N, Omega_c);
-    let h_of_s;
-    switch(filter_type)
-    {
-        case 'lowpass':
-            h_of_s = H_of_s(poles, Omega_c, filterType.LOWPASS);
-            break;
-        case 'highpass':
-            h_of_s = H_of_s(poles, Omega_c, filterType.HIGHPASS);
-            break;
-    }
-    // 3. 
-    const h_of_z = bilinearTransform(h_of_s);
-    
-    const text = ["\n", "> " + cmd, "num:" + h_of_z.num.join(' ') + " den:" + h_of_z.den.join(' ')]
+    const coef = AnalogToDigitalTransformationDesign(match[1] as AnalogToDigitalTransformationDesignMethod, match[2] as FilterType, match[3], match[4], match[4]);
+
+    const text = ["\n", "> " + cmd, "num:" + coef.num.join(' ') + " den:" + coef.den.join(' ')]
     updateLog(log.concat(text));
 }
 

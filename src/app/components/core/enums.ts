@@ -1,5 +1,18 @@
 export enum FilterType {
-    LOWPASS = "Low-pass",
-    HIGHPASS = "High-pass",
-    BANDPASS = "Band-pass"
+    LOWPASS = "lowpass",
+    HIGHPASS = "highpass",
+    BANDPASS = "bandpass",
+    BANDSTOP = "bandstop"
+}
+
+export enum WindowType {
+    RECTANGULAR = "rectangular",
+    HAMMING = "hamming",
+    HAN = "han",
+    BARTLETT = "bartlett"
+}
+
+export enum AnalogToDigitalTransformationDesignMethod {
+    BUTTERWORTH = "butterworth",
+    CHEBYSHEV = "chebyshev"
 }

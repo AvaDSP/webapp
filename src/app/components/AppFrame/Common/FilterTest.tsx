@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Line } from 'react-chartjs-2';
 import { ConfigurePopup } from './ConfigurePopup';
-import { filter } from './Utils';
+import { filter } from '../../core';
 import Button from '../../ui/Button';
 
 export const FilterTest = ({ filterCoefficients }) => {

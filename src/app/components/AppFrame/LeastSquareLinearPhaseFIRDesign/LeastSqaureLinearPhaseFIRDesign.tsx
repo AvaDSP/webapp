@@ -4,7 +4,7 @@ import { Plot } from '../Common/Plot'
 import FFT from 'fft.js';
 import { LS_LPFIRPanel } from './LS-LPFIRPanel';
 import { FilterTest } from '../Common/FilterTest';
-import { leastSquares_linearPhaseFIR, ZeroPad } from '../Common/Utils';
+import { leastSquares_linearPhaseFIR, ZeroPad } from '../../core';
 import { Equation } from '../Common/Equation';
 
 export const LeastSqaureLinearPhaseFIRDesign = () => {

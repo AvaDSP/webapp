@@ -4,3 +4,4 @@ export { bandpassImpulseResponse, lowPassImpulseResponse } from './impulseRespon
 export { Han, Bartlett, RectangleWindow, Hamming } from './window';
 export { getCausalButterworthPoles, getChebyshevIPoles } from './analog';
 export { leastSquares_linearPhaseFIR } from './leastSquaresLinearPhaseFIR';
+export { WindowingMethodDesign, AnalogToDigitalTransformationDesign } from './design';

@@ -1,2 +1,0 @@
-export const filterType = { LOWPASS: "Low-pass", HIGHPASS: "High-pass", BANDPASS: "Band-pass", BANDSTOP: "Band-stop" };
-export const windowType = { RECTANGULAR: "Rectangular" , HAMMING: "Hamming", HAN: "Han", BARTLETT: "Bartlett" };

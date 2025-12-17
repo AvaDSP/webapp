@@ -1,6 +1,9 @@
 export const filter = (
-    signal: number[],
-    filterCoefficients: { num: number[]; den: number[] }
+    signal: ArrayLike<number>,
+    filterCoefficients: {
+        num: ArrayLike<number>;
+        den: ArrayLike<number>;
+    }
 ): number[] => {
     const y_buffer = new Array(filterCoefficients.den.length).fill(0);
     let result: number[] = [];

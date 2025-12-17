@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { filterType, IIRfilterDesignMethod } from '../Common/enums';
+import { AnalogToDigitalTransformationDesignMethod, FilterType } from '../../core/enums';
 import Button from '../../ui/Button';
 
 export const Panel = ({ trigger, updateTrigger,
@@ -19,7 +19,7 @@ export const Panel = ({ trigger, updateTrigger,
 
     return (
         <div className="flex flex-col justify-between h-screen h-48 bg-gray-50 p-2 my-5 mx-2 rounded-2xl shadow-md" style={{ height: '322px', width: '515px' }}>
-            <div className="mx-4 my-5">
+            <div className="mx-4 my-6">
                 <div id="content">
                     <div className="flex items-center">
                         <label>Filter Type:</label>
@@ -30,8 +30,8 @@ export const Panel = ({ trigger, updateTrigger,
 
                             {fitlerTypeDropdownIsOpen && (
                                 <div className="absolute flex flex-col bg-white p-3 shadow  rounded-lg z-10">
-                                    <a id="chooseFilterType" onClick={() => { updateChoosenFilterType(filterType.LOWPASS); toggleFilterTypeDropdown(); } } className="my-0.5 w-24 cursor-pointer">Low-pass</a>
-                                    <a id="chooseFilterType" onClick={() => { updateChoosenFilterType(filterType.HIGHPASS); toggleFilterTypeDropdown(); } } className="my-0.5 w-24 cursor-pointer">High-pass</a>
+                                    <a id="chooseFilterType" onClick={() => { updateChoosenFilterType(FilterType.LOWPASS); toggleFilterTypeDropdown(); } } className="my-0.5 w-24 cursor-pointer">Low-pass</a>
+                                    <a id="chooseFilterType" onClick={() => { updateChoosenFilterType(FilterType.HIGHPASS); toggleFilterTypeDropdown(); } } className="my-0.5 w-24 cursor-pointer">High-pass</a>
                                 </div>
                             )}
                         </div>
@@ -46,8 +46,8 @@ export const Panel = ({ trigger, updateTrigger,
                         </button>
                         {methodDropdownIsOpen && (
                             <div className="absolute flex flex-col bg-white p-3 shadow  rounded-lg">
-                                <a className="z-0 my-0.5 w-24 cursor-pointer" onClick={() => { updateChosenMethod(IIRfilterDesignMethod.BUTTERWORTH); toggleMethodDropdown(); } }>Butterworth</a>
-                                <a className="z-0 my-0.5 w-24 cursor-pointer" onClick={() => { updateChosenMethod(IIRfilterDesignMethod.CHEBYSHEV); toggleMethodDropdown(); } }>Chebyshev</a>
+                                <a className="z-0 my-0.5 w-24 cursor-pointer" onClick={() => { updateChosenMethod(AnalogToDigitalTransformationDesignMethod.BUTTERWORTH); toggleMethodDropdown(); } }>Butterworth</a>
+                                <a className="z-0 my-0.5 w-24 cursor-pointer" onClick={() => { updateChosenMethod(AnalogToDigitalTransformationDesignMethod.CHEBYSHEV); toggleMethodDropdown(); } }>Chebyshev</a>
                             </div>
                         )}
                     </div>
@@ -58,7 +58,7 @@ export const Panel = ({ trigger, updateTrigger,
                         <label>Filter Order:</label>
                         <input className="rounded-lg shadow p-1 my-4 w-32 mx-1" onChange={(e) => updateFilterOrder(Number(e.target.value))} value={filterOrder} placeholder="Number" type="number" min="1"></input>
                     </div>
-                    { chosenMethod == IIRfilterDesignMethod.CHEBYSHEV &&
+                    { chosenMethod == AnalogToDigitalTransformationDesignMethod.CHEBYSHEV &&
                     <div>
                         <label>Epsilon</label>
                         <input className="rounded-lg shadow p-1 my-4 w-32 mx-1" onChange={(e) => updateChebyshevEpsilonFactor(Number(e.target.value))} value={chebyshevEpsilonFactor} placeholder="Ripple factor" type="number" step="0.01" min="0.00001"></input>
@@ -67,21 +67,21 @@ export const Panel = ({ trigger, updateTrigger,
                         
                 </div>
 
-                {chosenFilterType == "Low-pass" &&
+                {chosenFilterType == "lowpass" &&
                     <div className="mt-2">
                         <label>Cuttoff Freq:</label>
                         <input className="rounded-lg shadow p-1 w-32 mx-1" onChange={(e) => updateLowCutoff(Number(e.target.value))} value={lowCutoff} placeholder="Rad/Samples" type="number" step="0.01" max="3.14" min="0"></input>
                     </div>
                 }
 
-                {chosenFilterType == "High-pass" &&
+                {chosenFilterType == "highpass" &&
                     <div className="mt-2">
                         <label>Cuttoff Freq:</label>
                         <input className="rounded-lg shadow p-1 w-32 mx-1" onChange={(e) => updateLowCutoff(Number(e.target.value))} value={lowCutoff} placeholder="Rad/Samples" type="number" step="0.01" max="3.14" min="0"></input>
                     </div>
                 }
 
-                {chosenFilterType == "Band-pass" &&
+                {chosenFilterType == "bandpass" &&
                     <div className="mt-2">
                         <label>Low freq:</label>
                         <input className="rounded-lg shadow p-1 my-3 w-32 mx-1 mr-5" onChange={(e) => updateLowCutoff(Number(e.target.value))} value={lowCutoff} placeholder="Rad/Samples" type="number" step="0.01" max="3.14" min="0"></input>

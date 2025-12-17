@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Plot } from '../Common/Plot'
 import { Panel } from './Panel';
-import { ZeroPad } from '../Common/Utils';
+import { ZeroPad } from '../../core';
 import FFT from 'fft.js';
 
 export const Periodogram = () => {

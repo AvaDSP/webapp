@@ -3,19 +3,18 @@ import { Plot } from '../Common/Plot'
 import { Panel } from './Panel';
 import { FilterTest } from '../Common/FilterTest';
 import { IIREquation } from '../Common/IIREquation';
-import { bilinearTransform, getCausalButterworthPoles, getChebyshevIPoles, getImpulseResponse, H_of_s, ZeroPad } from '../Common/Utils';
+import { AnalogToDigitalTransformationDesign, getImpulseResponse, ZeroPad } from '../../core';
 import FFT from 'fft.js';
-import { filterType, IIRfilterDesignMethod } from '../Common/enums';
+import { FilterType, AnalogToDigitalTransformationDesignMethod} from '../../core/enums';
 
 export const IIRFilterDesign = () => {
     const [trigger, setTrigger] = useState(false);
-
     const [filterOrder, setFilterOrder] = useState(4);
     const [filterCoefficients, setFilterCoefficients] = useState<{ num: any[]; den: any[] }>({ num: [1], den: [] });
     const [lowCutoff, setLowCutoff] = useState(0.4);
     const [highCutoff, setHighCutoff] = useState(0.9);
-    const [chosenFilterType, setChosenFilterType] = useState(filterType.LOWPASS);
-    const [chosenDesignMethodType, setChosenDesignMethodType] = useState(IIRfilterDesignMethod.BUTTERWORTH);
+    const [chosenFilterType, setChosenFilterType] = useState(FilterType.LOWPASS);
+    const [chosenDesignMethodType, setChosenDesignMethodType] = useState(AnalogToDigitalTransformationDesignMethod.BUTTERWORTH);
     const [chebyshevEpsilonFactor, setChebyshevEpsilonFactor] = useState(0.5);
 
     const [magnitudeResponse, setMagnitudeResponse] = useState({
@@ -61,24 +60,13 @@ export const IIRFilterDesign = () => {
     }
 
     useEffect(() => {
-        // Steps:
-        // 1. Convert the discrete freq. to cont. freq. via the formula: Omega = 2*tan(w/2)
-        // 2. Design an analog filter
-        // 3. Convert the analog filter to digital filter (bilinear transform)
-        const Omega_c = 2 * Math.tan(lowCutoff / 2);
-        var poles;
-        switch(chosenDesignMethodType) {
-            case IIRfilterDesignMethod.BUTTERWORTH:
-                poles = getCausalButterworthPoles(filterOrder, Omega_c);
-                break;
-            case IIRfilterDesignMethod.CHEBYSHEV:
-                poles = getChebyshevIPoles(filterOrder, Omega_c, chebyshevEpsilonFactor);
-                break;
-        }
-
-        const h_of_s = H_of_s(poles, Omega_c, chosenFilterType);
-        const h_of_z = bilinearTransform(h_of_s);
-        setFilterCoefficients(() => h_of_z );
+        const h_of_z = AnalogToDigitalTransformationDesign(chosenDesignMethodType,
+                                                chosenFilterType,
+                                                filterOrder,
+                                                lowCutoff,
+                                                highCutoff,
+                                                chebyshevEpsilonFactor);
+        setFilterCoefficients(() => h_of_z);
         computeMagnitudeAndFreqOfTheFrequencyResponse(h_of_z);
 
     }, [trigger]);

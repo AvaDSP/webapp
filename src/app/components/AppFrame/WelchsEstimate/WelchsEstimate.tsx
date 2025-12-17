@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Plot } from '../Common/Plot'
 import { Panel } from './Panel';
-import { elementWiseMultiply, Hamming, Han, RectangleWindow, ZeroPad } from '../Common/Utils';
+import { elementWiseMultiply, Hamming, Han, RectangleWindow } from '../../core';
 import FFT from 'fft.js';
 import { Window } from './enum';
 

@@ -57,9 +57,9 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-screen">
+    <div className="relative flex h-screen z-20">
       {/* Sidebar */}
-      <aside className="flex flex-col px-5 py-4 border-r border-slate-200">
+      <aside className="fixed flex flex-col px-5 py-4 border-r border-slate-200 z-30 bg-white h-full">
         {items.map((item, index) => {
         if (item.name === "prompt") {
           return (
@@ -92,7 +92,7 @@ export default function Home() {
 
       </aside>
       {/* Main app */}
-      <main className="flex-grow">
+      <main className="absolute left-[250px] h-full overflow-y-auto flex z-10">
         {addComponent()}
       </main>
   </div>
