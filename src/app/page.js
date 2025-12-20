@@ -7,7 +7,6 @@ import { LeastSqaureLinearPhaseFIRDesign } from './components/AppFrame/LeastSqua
 import { Periodogram } from './components/AppFrame/Periodogram/Periodogram';
 import { Prompt } from './components/AppFrame/Prompt/Prompt';
 import { WelchsEstimate } from './components/AppFrame/WelchsEstimate/WelchsEstimate';
-import { Simulation } from './components/AppFrame/Simulation/Simulation';
 
 export default function Home() {
   const items = [
@@ -19,7 +18,6 @@ export default function Home() {
     { placeholder: "Periodogram estimation", name: "periodogram" },
     { placeholder: "Welch's method", name: "welchs_estimate" },
     { placeholder: "separator2", name: "seperator" },
-    { placeholder: "System Simulation", name: "simulation" },
     { placeholder: "> Interactive Prompt", name: "prompt" },
     { placeholder: "Help?", name: "help" }
   ];
@@ -40,8 +38,6 @@ export default function Home() {
         return <Periodogram />
       case "welchs_estimate":
         return <WelchsEstimate />
-      case "simulation":
-        return <Simulation />        
       case "prompt":
         return <Prompt />;
       case "help":
