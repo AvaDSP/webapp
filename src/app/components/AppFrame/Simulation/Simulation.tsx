@@ -18,12 +18,12 @@ export const Simulation = () => {
 
     useEffect(() => {
         const initNodes = [
-            new Generator("step", 50, 110, 2),
-            new Sum("sum", 200, 110),
-            new DiscretePID("pid", 300, 110, 2),
-            new Plant("plant", 450, 110, [2, 5], [1, 3, 2]),
-            new Display("disp", 650, 110),
-            new Modifier("mod", 330, 210, 0.1, 0),
+            new Generator("step", 100, 130, 2),
+            new Sum("sum", 250, 130),
+            new DiscretePID("pid", 350, 130, 2),
+            new Plant("plant", 500, 130, [2, 5], [1, 3, 2]),
+            new Display("disp", 700, 130),
+            new Modifier("mod", 380, 230, 0.1, 0),
         ];
         const initEdgeList = [
             { from: initNodes[0], to: initNodes[1], fromPos: 1, toPos: 3 },
@@ -57,7 +57,7 @@ export const Simulation = () => {
         if (!simFinishTrigger) return;
         setSimFinishTrigger(false);
         setShowSimFinishMessage(true);
-        setTimeout(() => setShowSimFinishMessage(false), 2000);
+        setTimeout(() => setShowSimFinishMessage(false), 4000);
     }, [simFinishTrigger])
 
     const [selectedMode, setSelectedMode] = useState<selectionModeEnum>(selectionModeEnum.ADD_GENERATOR);
