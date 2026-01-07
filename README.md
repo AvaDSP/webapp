@@ -1,5 +1,8 @@
 # AvaDSP web app
-An interactive digital signal processing (DSP) application for designing filters, estimating power spectral density, generating waveforms, and more.
+An interactive controls & signal processing web app that performs:
+- Design and visualization of digital filters
+- Hybrid simulation of dynamic systems
+- Power spectral density estimation
 
 ## Filter Design
 The application supports designing digital filters using the following methods:
@@ -15,6 +18,15 @@ After a filter is designed, the application:
 - Generates the corresponding filter coefficients
 - Simulates and visualizes the filter’s output on user-selected input signals
 
+## Hybrid Simulation
+A system consisting of the following elements can be simulated:
+
+- Continuous Plant
+- Digital Filter
+- Discrete PID
+- Sum Block
+- Signal Modifier
+
 ## Spectral Estimation
 
 For spectrum estimation, the app can receive:
@@ -23,7 +35,6 @@ For spectrum estimation, the app can receive:
 - an expressions to generate signals directly.
 
 Afterwards, the app estimates power spectrum desnsity (PSD) via periodogram or Welch's method.
-
 
 ## Getting Started
 To use the app, simply visit [AvaDSP.github.io/webapp](https://AvaDSP.github.io/webapp).
