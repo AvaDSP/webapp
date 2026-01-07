@@ -136,6 +136,11 @@ export const Simulation = () => {
                         setNodes((prev) => [...prev, new Sum(String(Math.random()), x - (Sum.defaultWidth / 2), y - (Sum.defaultHeight / 2))]);
                     }
                     break;
+                case selectionModeEnum.ADD_MODIFIER:
+                    if (!node) {
+                        setNodes((prev) => [...prev, new Modifier(String(Math.random()), x - (Modifier.defaultWidth / 2), y - (Modifier.defaultHeight / 2), 1, 0)]);
+                    }
+                    break;
                 case selectionModeEnum.REMOVE:
                     if (node) {
                         setEdgeList(prevEdges =>

@@ -2,46 +2,52 @@ import { DiscretePID, Display, Edge, Generator, NodeBase, FSFilter } from './Nod
 import { Plant } from './NodeTypes/Plant';
 import { Signal } from './NodeTypes/Signal';
 
-export const simulate = (nodes: NodeBase[], edges: Edge[], setNodes: any, Ts = 0.01, simulationSteps = 100, setSimFinishTrigger) => {
+export const simulate = (
+    nodes: NodeBase[],
+    edges: Edge[],
+    setNodes: any,
+    Ts = 0.01,
+    simulationSteps = 100,
+    setSimFinishTrigger
+) => {
     validate(nodes, edges);
+
     const topo = topoSort(nodes, edges);
     if (!topo) throw new Error("A cycle was found in the graph.");
 
-    // Init nodes
     init(nodes);
     setTs(nodes, Ts);
 
-    // Compute parent nodes
-    const parents = new Map<NodeBase, NodeBase[]>();
+    const nodeMap = new Map<string, NodeBase>();
+    for (const n of nodes) nodeMap.set(n.id, n);
+
+    const parents = new Map<string, string[]>();
     for (const edge of edges) {
-        if (!parents.has(edge.to)) parents.set(edge.to, []);
-        parents.get(edge.to)!.push(edge.from);
+        if (!parents.has(edge.to.id)) parents.set(edge.to.id, []);
+        parents.get(edge.to.id)!.push(edge.from.id);
     }
 
-    // Simulation loop
-    const output = new Map<NodeBase, any>();
+    const output = new Map<string, Signal>();
 
     for (let step = 0; step < simulationSteps; step++) {
-        // Compute outputs in topological order
         for (const node of topo) {
-            const parentList = parents.get(node) || [];
+            const parentIds = parents.get(node.id) || [];
             const input: Signal[] = [];
 
-            // Collect parent outputs
-            for (const parent of parentList) {
-                const parentOutput = output.get(parent);
+            for (const parentId of parentIds) {
+                const parentOutput = output.get(parentId);
                 if (parentOutput) input.push(parentOutput);
             }
 
-            // Compute node output based on type
-            let nodeOutput: Signal;
             console.log("Executing: " + node.id + " with input: " + input.map(e => String(e.y)).join(','));
-            nodeOutput = node.execute(input);
+
+            const nodeOutput = node.execute(input);
+
             console.log("Output: " + nodeOutput.y);
-            output.set(node, nodeOutput);
+            output.set(node.id, nodeOutput);
         }
     }
-    // shallow copy causes rerender
+
     setNodes([...nodes]);
     setSimFinishTrigger((_) => true);
     return output;
@@ -79,7 +85,7 @@ function topoSort(nodes: NodeBase[], edges: Edge[]): NodeBase[] | null {
         const node = queue.shift()!;
         order.push(node);
 
-        for (const next of adjList.get(node)!) {
+        for (const next of adjList.get(node.id)!) {
             const deg = inDegree.get(next)! - 1;
             inDegree.set(next, deg);
             if (deg == 0) queue.push(next);
@@ -89,12 +95,20 @@ function topoSort(nodes: NodeBase[], edges: Edge[]): NodeBase[] | null {
     return order.length == nodes.length ? order : null;
 }
 
-function edgeListToAdjList(nodes: NodeBase[], edges: Edge[]): Map<NodeBase, NodeBase[]> {
-    const adjList = new Map<NodeBase, NodeBase[]>();
-    for (const node of nodes) adjList.set(node, []);
-    for (const edge of edges) adjList.get(edge.from)!.push(edge.to);
+function edgeListToAdjList(nodes: NodeBase[], edges: Edge[]): Map<string, NodeBase[]> {
+    const adjList = new Map<string, NodeBase[]>();
+
+    for (const node of nodes) {
+        adjList.set(node.id, []);
+    }
+
+    for (const edge of edges) {
+        adjList.get(edge.from.id)!.push(edge.to);
+    }
+
     return adjList;
 }
+
 
 const init = (nodes) => {
     nodes.forEach(node => {

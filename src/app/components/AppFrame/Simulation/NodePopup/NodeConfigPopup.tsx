@@ -4,8 +4,6 @@ import { Generator, Modifier, FSFilter, BlockType, Display, Sum, NodeBase, Discr
 import { Plant } from "../NodeTypes/Plant";
 import { Line } from 'react-chartjs-2';
 
-// import { InputNode, SumNode, TFNode } from "./types";
-
 export const NodeConfigurePopup = ({ isOpen, onClose, incomingPorts, node, setNodes }) => {
     const [blockType, setBlockType] = useState<BlockType.GENERATOR | undefined>();
 
@@ -26,7 +24,6 @@ export const NodeConfigurePopup = ({ isOpen, onClose, incomingPorts, node, setNo
     const [Kp, setKp] = useState(0);
     const [Ki, setKi] = useState(0);
     const [Kd, setKd] = useState(0);
-    const [Ts, setTs] = useState(0);
     const [integralMin, setIntegralMin] = useState(0);
     const [integralMax, setIntegralMax] = useState(0);
 
@@ -34,8 +31,11 @@ export const NodeConfigurePopup = ({ isOpen, onClose, incomingPorts, node, setNo
     const [std, setStd] = useState(0);
     const [mean, setMean] = useState(0);
 
-    const [sumSelections, setSumSelections] = useState({});
-    const [signalValue, setSignalValue] = useState("");
+    // Filter
+    const [filterNum, setFilterNum] = useState([]);
+    const [filterDen, setFilterDen] = useState([]);
+    const [filterNumStr, setFilterNumStr] = useState('');
+    const [filterDenStr, setFilterDenStr] = useState('');
 
     const [graphData, setGraphData] = useState(
         {
@@ -52,8 +52,6 @@ export const NodeConfigurePopup = ({ isOpen, onClose, incomingPorts, node, setNo
         }
     );
 
-    const [graphX, setGraphX] = useState([]);
-    const [graphY, setGraphY] = useState([]);
 
     const graphOptions = {
         scales: {
@@ -78,10 +76,6 @@ export const NodeConfigurePopup = ({ isOpen, onClose, incomingPorts, node, setNo
             setNumStr(node.num.join(' '));
             setDenStr(node.den.join(' '));
         }
-        if (node instanceof Display) {
-            setGraphX(node.graphX);
-            setGraphY(node.graphY);
-        }
         if (node instanceof Generator) {
             setStepAmplitude(node.value);
         }
@@ -92,13 +86,16 @@ export const NodeConfigurePopup = ({ isOpen, onClose, incomingPorts, node, setNo
             setKd(node.Kd);
             setKi(node.Ki);
             setKp(node.Kp);
-            setTs(node.Ts);
             setIntegralMax(node.integral_max);
             setIntegralMin(node.integral_min);
         }
         if (node instanceof Modifier) {
             setStd(node.std);
             setMean(node.mean);
+        }
+        if (node instanceof FSFilter) {
+            setFilterNum(node.num);
+            setFilterDen(node.den);
         }
     }, []);
 
@@ -132,13 +129,16 @@ export const NodeConfigurePopup = ({ isOpen, onClose, incomingPorts, node, setNo
             setKd(node.Kd);
             setKi(node.Ki);
             setKp(node.Kp);
-            setTs(node.Ts);
             setIntegralMax(node.integral_max);
             setIntegralMin(node.integral_min);
         }
         if (node instanceof Modifier) {
             setStd(node.std);
             setMean(node.mean);
+        }
+        if (node instanceof FSFilter) {
+            setFilterNum(node.num);
+            setFilterDen(node.den);
         }
     }, [node]);
 
@@ -239,23 +239,41 @@ export const NodeConfigurePopup = ({ isOpen, onClose, incomingPorts, node, setNo
                 {/* FSFilter */}
                 {node instanceof FSFilter && (
                     <div>
-                        <input
-                            type="text"
-                            placeholder="Value"
-                            value={num.toString()}
-                            onChange={(e) => {
-                                console.log(e.target.value);
-                                // TODO validate
-                            }}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Value"
-                            value={den.toString()}
-                            onChange={(e) => setDen(e.target.value.split(',').map(e => Number(e)))}  // TODO validate
-                        />
+                        <div className="flex rounded p-2">
+                            <label className="mr-3 mt-1" htmlFor="num">Num:</label>
+                            <input
+                                type="text"
+                                id="num"
+                                className="w-full border-gray-400 border rounded p-1"
+                                value={filterNumStr}
+                                onChange={(e) => {
+                                    const raw = e.target.value;
+                                    setFilterNumStr(raw);
+                                    const parsed = parseArray(raw);
+                                    node.num = parsed;
+                                    setFilterNum(parsed);
+                                }}
+                            />
+                        </div>
+                        <div className="flex rounded p-2">
+                            <label className="mr-4 mt-1" htmlFor="den">Den:</label>
+                            <input
+                                type="text"
+                                id="den"
+                                className="w-full border-gray-400 border rounded p-1"
+                                value={filterDenStr}
+                                onChange={(e) => {
+                                    const raw = e.target.value;
+                                    setFilterDenStr(raw);
+                                    const parsed = parseArray(raw);
+                                    node.den = parsed;
+                                    setFilterDen(parsed);
+                                }}
+                            />
+                        </div>
                     </div>
                 )}
+
 
 
                 {/* Modifier */}
