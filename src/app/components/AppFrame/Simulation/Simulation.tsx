@@ -35,8 +35,8 @@ export const Simulation = () => {
             { from: initNodes[5], to: initNodes[1], fromPos: 3, toPos: 2 },
         ];
 
-        (initNodes[1] as Sum).setSign(initNodes[5], "-");
-        (initNodes[1] as Sum).setSign(initNodes[0], "+");
+        (initNodes[1] as Sum).setSign(initNodes[5].id, "-");
+        (initNodes[1] as Sum).setSign(initNodes[0].id, "+");
 
         initNodes[0].increaseOutDegree();
         initNodes[1].increaseInDegree();
@@ -97,6 +97,8 @@ export const Simulation = () => {
         return null;
     }
 
+    const genRndId = () => { return String(Math.round(Math.random() * 10000) / 10000) }
+
     const handleCanvasOnClick = (e) => {
         try {
             const canvasRect = canvasRef.current.getBoundingClientRect();
@@ -108,37 +110,37 @@ export const Simulation = () => {
                     if (plantExists) throw new Error("Plant already exists.");
                     setPlantExists(true);
                     if (!node) {
-                        setNodes((prev) => [...prev, new Plant(String(Math.random()), x - (Plant.defaultWidth / 2), y - (Plant.defaultHeight / 2), [], [])]);
+                        setNodes((prev) => [...prev, new Plant("plant" + genRndId(), x - (Plant.defaultWidth / 2), y - (Plant.defaultHeight / 2), [], [])]);
                     }
                     break;
                 case selectionModeEnum.ADD_GENERATOR:
                     if (!node) {
-                        setNodes((prev) => [...prev, new Generator(String(Math.random()), x - (Generator.defaultWidth / 2), y - (Generator.defaultHeight / 2))]);
+                        setNodes((prev) => [...prev, new Generator("gen" + genRndId(), x - (Generator.defaultWidth / 2), y - (Generator.defaultHeight / 2))]);
                     }
                     break;
                 case selectionModeEnum.ADD_FSFILTER:
                     if (!node) {
-                        setNodes((prev) => [...prev, new FSFilter(String(Math.random()), x - (FSFilter.defaultWidth / 2), y - (FSFilter.defaultHeight / 2))]);
+                        setNodes((prev) => [...prev, new FSFilter("filter" + genRndId(), x - (FSFilter.defaultWidth / 2), y - (FSFilter.defaultHeight / 2))]);
                     }
                     break;
                 case selectionModeEnum.ADD_DISPLAY:
                     if (!node) {
-                        setNodes((prev) => [...prev, new Display(String(Math.random()), x - (Display.defaultWidth / 2), y - (Display.defaultHeight / 2))]);
+                        setNodes((prev) => [...prev, new Display("disp" + genRndId(), x - (Display.defaultWidth / 2), y - (Display.defaultHeight / 2))]);
                     }
                     break;
                 case selectionModeEnum.ADD_FUSION:
                     if (!node) {
-                        setNodes((prev) => [...prev, new Fusion(String(Math.random()), x - (Fusion.defaultWidth / 2), y - (Fusion.defaultHeight / 2))]);
+                        setNodes((prev) => [...prev, new Fusion("fusion" + genRndId(), x - (Fusion.defaultWidth / 2), y - (Fusion.defaultHeight / 2))]);
                     }
                     break;
                 case selectionModeEnum.ADD_SUM:
                     if (!node) {
-                        setNodes((prev) => [...prev, new Sum(String(Math.random()), x - (Sum.defaultWidth / 2), y - (Sum.defaultHeight / 2))]);
+                        setNodes((prev) => [...prev, new Sum("sum" + genRndId(), x - (Sum.defaultWidth / 2), y - (Sum.defaultHeight / 2))]);
                     }
                     break;
                 case selectionModeEnum.ADD_MODIFIER:
                     if (!node) {
-                        setNodes((prev) => [...prev, new Modifier(String(Math.random()), x - (Modifier.defaultWidth / 2), y - (Modifier.defaultHeight / 2), 1, 0)]);
+                        setNodes((prev) => [...prev, new Modifier("mod" + genRndId(), x - (Modifier.defaultWidth / 2), y - (Modifier.defaultHeight / 2), 1, 0)]);
                     }
                     break;
                 case selectionModeEnum.REMOVE:

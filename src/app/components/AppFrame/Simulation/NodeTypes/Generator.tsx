@@ -7,7 +7,7 @@ export class Generator extends NodeBase {
     this.value = value;
   }
   execute(u = [{ y: 0, t: 0, src: null }]): Signal {
-    return {y: this.value, t: null, src: null};
+    return {y: this.value, t: null, src: this};
   }
   static defaultWidth = 100;
   static defaultHeight = 50;

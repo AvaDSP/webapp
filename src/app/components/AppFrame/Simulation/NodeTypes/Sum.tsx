@@ -2,14 +2,9 @@ import { NodeBase, BlockType } from './index';
 import type { Signal } from './Signal';
 
 export class Sum extends NodeBase {
-    constructor(
-        id: string,
-        x: number,
-        y: number,
-        displayName = "Sum",
-        width = 50,
-        height = 50
-    ) {
+    sumSigns: Map<string, "+" | "-"> = new Map();
+
+    constructor(id: string, x: number, y: number, displayName = "Sum", width = 50, height = 50) {
         super(id, displayName, x, y, BlockType.SUM, width, height);
     }
 
@@ -17,7 +12,7 @@ export class Sum extends NodeBase {
         let tmp = 0;
 
         for (const sig of u) {
-            const sign = this.sumSigns.get(sig.src) ?? "+";
+            const sign = this.sumSigns.get(sig.src.id);
             if (sign == "+") tmp += sig.y;
             else if (sign == "-") tmp -= sig.y;
         }
@@ -29,8 +24,8 @@ export class Sum extends NodeBase {
         };
     }
 
-    setSign(node: NodeBase, sign: "+" | "-") {
-        this.sumSigns.set(node, sign);
+    setSign(nodeId: string, sign: "+" | "-") {
+        this.sumSigns.set(nodeId, sign);
     }
 
     getSign() {
@@ -40,5 +35,4 @@ export class Sum extends NodeBase {
     static defaultWidth = 50;
     static defaultHeight = 50;
     style = 'bg-red-600';
-    sumSigns: Map<NodeBase, "+" | "-"> = new Map();
 }

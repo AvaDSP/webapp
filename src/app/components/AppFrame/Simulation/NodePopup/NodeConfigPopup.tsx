@@ -5,8 +5,6 @@ import { Plant } from "../NodeTypes/Plant";
 import { Line } from 'react-chartjs-2';
 
 export const NodeConfigurePopup = ({ isOpen, onClose, incomingPorts, node, setNodes }) => {
-    const [blockType, setBlockType] = useState<BlockType.GENERATOR | undefined>();
-
     // Step
     const [genType, setGenType] = useState("step");
     const [stepAmplitude, setStepAmplitude] = useState<number>(0);
@@ -18,7 +16,7 @@ export const NodeConfigurePopup = ({ isOpen, onClose, incomingPorts, node, setNo
     const [denStr, setDenStr] = useState('');
 
     // Sum
-    const [sumMap, setSumMap] = useState<Map<NodeBase, "+" | "-">>(null)
+    const [sumMap, setSumMap] = useState<Map<string, "+" | "-">>(null)
 
     // D-PID
     const [Kp, setKp] = useState(0);
@@ -145,15 +143,21 @@ export const NodeConfigurePopup = ({ isOpen, onClose, incomingPorts, node, setNo
 
     if (!isOpen) return null;
 
-    const handleSumChange = (n: Sum, value: "+" | "-") => {
+    const handleSumChange = (sum: Sum, value: "+" | "-") => {
         setSumMap(p => {
             const updated = new Map(p);
-            updated.set(n, value);
+            updated.set(sum.id, value);
             return updated;
         });
-        node.setSign(n, value);
+
         setNodes(prev =>
-            prev.map(n => n.id === node.id ? node : n)
+            prev.map(nd => {
+                if (nd.id !== node.id) return nd;
+                const newNode = Object.create(Object.getPrototypeOf(nd));
+                Object.assign(newNode, nd);
+                newNode.setSign(sum.id, value);
+                return newNode;
+            })
         );
     };
 
@@ -323,7 +327,7 @@ export const NodeConfigurePopup = ({ isOpen, onClose, incomingPorts, node, setNo
                                 </div>
                                 <select
                                     className="rounded w-20 text-center"
-                                    value={sumMap.get(port) ?? "+"}
+                                    value={sumMap.get(port.id) ?? "+"}
                                     onChange={(e) => handleSumChange(port, e.target.value as "+" | "-")}
                                 >
                                     <option value="+">+</option>
