@@ -102,7 +102,7 @@ export const parse = (cmd, log, updateLog, updateCmd) => {
 const help = (log, updateLog) => {
     const text = [
         "\n",
-        "AvaDSP version 0.2",
+        "DSPToolset version 0.2",
         "Available commands:",
         "\t 'help' - Shows the help message",
         "\t 'version' - Shows the web apps version",

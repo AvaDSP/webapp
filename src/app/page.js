@@ -18,11 +18,13 @@ export default function Home() {
     { placeholder: "Linear phase FIR-LS", name: "least_square_linear_phase_FIR" },
     { placeholder: "separator", name: "seperator" },
 
+    { placeholder: "Design & Simulation", name: "title_sim" },
     { placeholder: "Hybrid Simulation", name: "sensor_fusion_simulation" },
     { placeholder: "bottom_elements", name: "bottom_elements" },
     { placeholder: "separator", name: "seperator" },
+    { placeholder: "Utilites", name: "title_utlities" },
     { placeholder: "Periodogram estimation", name: "periodogram" },
-    { placeholder: "Welch's method", name: "welchs_estimate" },
+    { placeholder: "Welch's estimation", name: "welchs_estimate" },
     { placeholder: "separator2", name: "seperator" },
     { placeholder: "> Interactive Prompt", name: "prompt" },
     { placeholder: "Help?", name: "help" }
@@ -51,15 +53,56 @@ export default function Home() {
       case "help":
         return (
           <div className="text-black rounded-lg shadow w-full p-5">
-            <br></br>
             <p>
-              AvaDSP is an opensource web app for designing and visualizing digital filters, estimating power spectral density and more.
-              Features include designing filters by placing poles and zeroes on the Z-plane, FIR filter design using windowing method, IIR filter design using analog-to-digital transfomation, and lastly, linear phase FIR design via weighted least-squares solution.
+              DSPToolset is an opensource web app for designing and visualizing digital filters, estimating power spectral density, hybrid simulation and more.
+              Features:
             </p>
-            <p>
-              For additional information visit: <a className="text-blue-600" href="https://github.com/AvaDSP">https://github.com/AvaDSP</a></p>
+
+            <br></br><h2 className="font-bold">Filter Design</h2>
+            <p> The application supports designing digital filters using the following methods:</p>
+            <ul>
+              <li>- Visually placing poles and zeros on the Z-plane</li>
+              <li>- Windowing methods for FIR filter design</li>
+              <li>- Analog-to-digital IIR filter design using Butterworth and Chebyshev filters</li>
+              <li>- Weighted least-squares design of linear-phase FIR filters</li>
+            </ul>
             <br></br>
-            <p>Version: 0.3</p>
+            After a filter is designed, the application:
+            <br></br>
+
+            <ul>
+              <li>- Computes and displays the magnitude and phase of the frequency response</li>
+              <li>- Generates the corresponding filter coefficients</li>
+              <li>- Simulates and visualizes the filter’s output on user-selected input signals</li>
+            </ul>
+
+            <br></br><h2 className="font-bold">Hybrid Simulation</h2>
+            A system consisting of the following elements can be simulated:
+            <ul>
+              <li>- Continuous Plant</li>
+              <li>- Digital Filter</li>
+              <li>- Discrete PID</li>
+              <li>- Sum Block</li>
+              <li>- Signal Modifier</li>
+            </ul>
+
+
+            <br></br><h2 className="font-bold">Spectral Estimation</h2>
+
+            For spectrum estimation, the app can receive:
+
+            <ul>
+              <li>- a signal from a file, or</li>
+              <li>- an expressions to generate signals directly.</li>
+            </ul>
+            <br></br>
+
+            Afterwards, the app estimates power spectrum desnsity (PSD) via periodogram or Welch's method.
+            <br></br>
+            <br></br>
+            <p>
+              For additional information visit: <a className="text-blue-600" href="https://github.com/DSPToolset">https://github.com/DSPToolset</a></p>
+            <br></br>
           </div >
         )
     }
