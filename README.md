@@ -1,4 +1,4 @@
-# AvaDSP web app
+# Stride web app
 An interactive controls & signal processing web app that performs:
 - Design and visualization of digital filters
 - Hybrid simulation of dynamic systems
@@ -37,13 +37,13 @@ For spectrum estimation, the app can receive:
 Afterwards, the app estimates power spectrum desnsity (PSD) via periodogram or Welch's method.
 
 ## Getting Started
-To use the app, simply visit [AvaDSP.github.io/webapp](https://AvaDSP.github.io/webapp).
+To use the app, simply visit [dsptoolset.github.io/webapp](https://dsptoolset.github.io/).
 Alternatively, to install and run the app locally, make sure you have a recent version of [Node](https://nodejs.org/en) installed.
 Afterwards:
 
 - Clone the repository:
 ```shell
-git clone git@github.com:AvaDSP/webapp.git
+git clone git@github.com:dsptoolset/webapp.git
 cd webapp
 ```
 - Install the dependencies:
@@ -58,7 +58,7 @@ npm run dev
 
 Screenshot:
 
-![](https://raw.githubusercontent.com/AvaDSP/AvaDSP.github.io/refs/heads/main/screenshot.png)
+![](https://raw.githubusercontent.com/dsptoolset/dsptoolset.github.io/refs/heads/main/screenshot.png)
 <!-- ## Demo
 The following video shows the design of a low-pass filter:
 ![](https://raw.githubusercontent.com/alavifazel/demo/refs/heads/main/animation-smaller.gif) -->

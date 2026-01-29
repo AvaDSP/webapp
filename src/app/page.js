@@ -52,9 +52,9 @@ export default function Home() {
         return <Prompt />;
       case "help":
         return (
-          <div className="text-black rounded-lg shadow w-full p-5">
+          <div className="rounded-lg shadow w-full p-5">
             <p>
-              DSPToolset is an opensource web app for designing and visualizing digital filters, estimating power spectral density, hybrid simulation and more.
+              <a className="text-blue-600" href="https://github.com/dsptoolset">Dsptoolset</a> is an opensource web app for designing and visualizing digital filters, estimating power spectral density, hybrid simulation and more.
               Features:
             </p>
 
@@ -101,7 +101,7 @@ export default function Home() {
             <br></br>
             <br></br>
             <p>
-              For additional information visit: <a className="text-blue-600" href="https://github.com/DSPToolset">https://github.com/DSPToolset</a></p>
+              For additional information visit: <a className="text-blue-600" href="https://github.com/dsptoolset">https://github.com/dsptoolset</a></p>
             <br></br>
           </div >
         )
